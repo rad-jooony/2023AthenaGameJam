@@ -10,6 +10,10 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "BlueprintSnapNodes",
+			"Enabled": true
 		}
 	]
 }
