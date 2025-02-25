@@ -12,9 +12,32 @@ void AMyPlayerController::OnHostGame()
     {
         GI->HostGame();
     }
-	if (GEngine)
+	
+	if (IsLocalController())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("Host Game Pressed!"));
+		ENetMode NetMode = GEngine->GetNetMode(GetWorld());
+		FString NetModeString;
+
+		switch (NetMode)
+		{
+		case NM_Standalone:
+			NetModeString = TEXT("Standalone");
+			break;
+		case NM_ListenServer:
+			NetModeString = TEXT("ListenServer");
+			break;
+		case NM_DedicatedServer:
+			NetModeString = TEXT("DedicatedServer");
+			break;
+		case NM_Client:
+			NetModeString = TEXT("Client");
+			break;
+		default:
+			NetModeString = TEXT("Unknown");
+			break;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("[%s] Host Game Pressed!"), *NetModeString);
 	}
 }
 
@@ -24,17 +47,52 @@ void AMyPlayerController::OnJoinGame()
 	{
 		GI->JoinGame("127.0.0.1");
 	}
-	
-	if (GEngine)
+
+	if (IsLocalController())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("Join Game Pressed!"));
+		ENetMode NetMode = GEngine->GetNetMode(GetWorld());
+		FString NetModeString;
+
+		switch (NetMode)
+		{
+		case NM_Standalone:
+			NetModeString = TEXT("Standalone");
+			break;
+		case NM_ListenServer:
+			NetModeString = TEXT("ListenServer");
+			break;
+		case NM_DedicatedServer:
+			NetModeString = TEXT("DedicatedServer");
+			break;
+		case NM_Client:
+			NetModeString = TEXT("Client");
+			break;
+		default:
+			NetModeString = TEXT("Unknown");
+			break;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("[%s] Join Game Pressed!"), *NetModeString);
 	}
 }
+			
 
 void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (IsLocalController())
+	{
+		TArray<AActor*> FoundCameras;
+		UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("SharedCamera"), FoundCameras);
+		if (FoundCameras.Num() > 0)
+		{
+			if (ACameraActor* SharedCamera = Cast<ACameraActor>(FoundCameras[0]))
+			{
+				SetViewTarget(SharedCamera);
+			}
+		}
+	}
 }
 
 void AMyPlayerController::SetupInputComponent()
@@ -58,3 +116,4 @@ void AMyPlayerController::SetupInputComponent()
 		}
 	}
 }
+	

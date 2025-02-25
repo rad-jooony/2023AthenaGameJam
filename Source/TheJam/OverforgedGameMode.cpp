@@ -6,5 +6,5 @@
 AOverforgedGameMode::AOverforgedGameMode()
 {
 	// Keeps lobby/server when switching levels
-	bUseSeamlessTravel = true;
+	//bUseSeamlessTravel = true;
 }
